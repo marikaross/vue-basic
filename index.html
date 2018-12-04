@@ -10,12 +10,12 @@
 		<style>
 
 :root {
-	font: 1rem/1.175 "BlinkMacSystemFont", -apple-system, "Roboto", sans-serif;
+	font: 1rem/1.175 "BlinkMacSystemFont", "Roboto", sans-serif;
 }
 
 #app {
-	display: flex; flex-direction: column;
-	justify-content: center; align-items: center;
+	display: flex;
+	flex-direction: column; justify-content: center; align-items: center;
 	width: 100vw; height: 100vh;
 	font-weight: 900; font-size: 8rem;
 	color: hsl(0, 0%, 100%);
@@ -33,13 +33,9 @@ img {
 	<body>
 
 		<div id="app">
-
-            <p
-				v-for="wizard in wizards()"
-				v-html="wizard.name + ' ' + wizard.pet"
-			></p>
-			
-
+            <wizard :name="harry"    :cast="oculus_reparo"     ></wizard>
+			<wizard :name="ron"      :cast="wingardium_leviosa"></wizard>
+			<wizard :name="hermione" :cast="alohomora"         ></wizard>
 		</div>
 
 		<script>
@@ -52,29 +48,39 @@ function emojify(name) {
 	return out
 }
 
+// cast returns a spell (function) that decorates the wizard
+function cast(emoji) {
+	var magic = emojify("magic")
+	return function (wizard) {
+		return wizard + " " + magic + " " + emoji + " " + magic
+	}
+}
+
+// Vue.component("harry"   , { template: `<p>` + emojify("harry"   ) + `</p>` })
+// Vue.component("ron"     , { template: `<p>` + emojify("ron"     ) + `</p>` })
+// Vue.component("hermione", { template: `<p>` + emojify("hermione") + `</p>` })
+
+Vue.component("wizard", {
+    props: ["name", "cast"],
+    template: `<p v-html="cast(name)"></p>`
+})
+
 var app = new Vue({
 	el: "#app",
 	data: {
-		wizard      : "",
-		harry       : emojify("harry"      ),
-		hedwig      : emojify("hedwig"     ),
-		ron         : emojify("ron"        ),
-		scabbers    : emojify("scabbers"   ),
-		hermione    : emojify("hermione"   ),
-		crookshanks : emojify("crookshanks")
+		harry    : emojify("harry"   ),	
+		ron      : emojify("ron"     ),
+		hermione : emojify("hermione")
 	},
 	methods: {
-		wizards: function () {
-			return [
-				{ name: this.harry   , pet: this.hedwig      },
-				{ name: this.ron     , pet: this.scabbers    },
-				{ name: this.hermione, pet: this.crookshanks }
-			]
-		}
+		// oculus_reparo returns a spell (function) that repairs glasses		
+		oculus_reparo: cast(emojify("oculus-reparo")),		
+		// wingardium_leviosa returns a spell (function) that levitates an object
+		wingardium_leviosa: cast(emojify("wingardium-leviosa")),
+		// alohomora returns a spell (function) that unlocks a door
+		alohomora: cast(emojify("alohomora"))
 	}
 })
-
-app.wizard = app.hermione
 
 		</script>
 
